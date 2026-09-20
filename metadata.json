@@ -1,0 +1,6 @@
+{
+  "name": "EventPulse Backend",
+  "description": "Event management and ticketing backend API built with Express, SQLite, JWT authentication, and seat-locking transactions.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
