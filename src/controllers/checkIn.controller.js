@@ -22,9 +22,9 @@ const validateCheckinController = asyncHandler(async(req , res)=>
             {
                 throw new ApiError(409, "This ticket has already been checked in!")
             }
-        if(ticket.organizer_id !== req.user.id && req.user.role !== "ADMIN")
+        if(req.user.role !== "ADMIN" && req.user.role !== "ORGANIZER" && ticket.organizer_id !== req.user.id)
             {
-                throw new ApiError(403 ,"You dont have permission to scan tickets!")
+                throw new ApiError(403 ,"You don't have permission to scan tickets! Gate check-in is restricted to Organizers.")
             }
         const updated = await markTicketAsCheckedIn(qr_code , req.user.id)
         if(!updated){ throw new ApiError(500, "Failed to check in the tickets")}

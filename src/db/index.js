@@ -1,4 +1,6 @@
 import sqlite3 from "sqlite3";
+import path from "path";
+import fs from "fs";
 import { DB_NAME } from "../constants.js";
 
 const schema = `
@@ -55,7 +57,7 @@ const schema = `
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         booking_id INTEGER UNIQUE NOT NULL,
         qr_code TEXT UNIQUE NOT NULL,
-        verified_by_organizer_id INTEGER NOT NULL,
+        verified_by_organizer_id INTEGER,
         checked_in_at TEXT,
         FOREIGN KEY (booking_id) REFERENCES bookings(id),
         FOREIGN KEY (verified_by_organizer_id) REFERENCES users(id)
@@ -73,15 +75,43 @@ CREATE INDEX IF NOT EXISTS idx_checkins_booking_id ON checkins(booking_id);
 
 let dbInstance = null;
 
+export const getDBFilePath = () => {
+  if (process.env.DATABASE_PATH) {
+    return process.env.DATABASE_PATH;
+  }
+  // Check if running on Vercel or in serverless environment
+  if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+    const tmpDbPath = path.join("/tmp", DB_NAME);
+    const localDbPath = path.resolve(process.cwd(), DB_NAME);
+
+    // If the local database exists and /tmp does not have it yet, copy it
+    if (fs.existsSync(localDbPath) && !fs.existsSync(tmpDbPath)) {
+      try {
+        fs.copyFileSync(localDbPath, tmpDbPath);
+        console.log(`Copied seed database to writable ${tmpDbPath}`);
+      } catch (copyErr) {
+        console.warn("Failed to copy seed database to /tmp:", copyErr.message);
+      }
+    }
+    return tmpDbPath;
+  }
+
+  return path.resolve(process.cwd(), DB_NAME);
+};
+
 export const connectDB = () => {
+  if (dbInstance) {
+    return Promise.resolve(dbInstance);
+  }
   return new Promise((resolve, reject) => {
-    const db = new sqlite3.Database(DB_NAME, (err) => {
+    const dbPath = getDBFilePath();
+    const db = new sqlite3.Database(dbPath, (err) => {
       if (err) {
         console.error("❌ SQLite connection failed:", err.message);
         return reject(err);
       }
       console.log(
-        `\n⚙️ SQLite connected successfully! Database File: ./${DB_NAME}`,
+        `\n⚙️ SQLite connected successfully! Database File: ${dbPath}`,
       );
       dbInstance = db;
 

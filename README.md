@@ -112,6 +112,34 @@ This project helped me **understand relational databases, transactions, and secu
 
 * * *
 
+## **🚀 Deployment to Vercel**
+
+EventPulse is configured for 1-click deployment on **Vercel** with full-stack support (Vite frontend static output + Express API serverless function in `/api/index.js`).
+
+### **Method 1: Deploy via Vercel Web Dashboard (Recommended)**
+1. Push your repository to **GitHub**.
+2. Go to [vercel.com](https://vercel.com) and click **"Add New Project"**.
+3. Import your GitHub repository.
+4. Vercel automatically detects the configuration from `vercel.json`:
+   - **Framework Preset**: Vite
+   - **Build Command**: `vite build`
+   - **Output Directory**: `dist`
+5. *(Optional)* Under **Environment Variables**, add:
+   - `ACCESS_TOKEN_SECRET`: (e.g. any random 32+ character string)
+   - `REFRESH_TOKEN_SECRET`: (e.g. any random 32+ character string)
+6. Click **Deploy**. Both the React client and Express API endpoints will be live on your `.vercel.app` domain!
+
+### **Method 2: Deploy via Vercel CLI**
+```bash
+# 1. Install Vercel CLI if needed
+npm install -g vercel
+
+# 2. Deploy to production
+vercel --prod
+```
+
+* * *
+
 ## **💻 How to Run**
 
 ### **1️⃣ Clone & Install**

@@ -1,6 +1,6 @@
 {
-  "name": "EventPulse Backend",
-  "description": "Event management and ticketing backend API built with Express, SQLite, JWT authentication, and seat-locking transactions.",
-  "requestFramePermissions": [],
+  "name": "EventPulse Private",
+  "description": "EventPulse — Modern event ticketing with guaranteed 10-minute seat reservations, instant digital QR passes, and gate check-in verification.",
+  "requestFramePermissions": ["camera"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

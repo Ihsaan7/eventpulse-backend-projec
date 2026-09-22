@@ -4,8 +4,10 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js",
+    "build": "vite build",
+    "vercel-build": "vite build",
+    "lint": "echo 'No linter configured'",
+    "dev": "node src/index.js",
     "start": "node src/index.js"
   },
   "keywords": [],
@@ -14,16 +16,25 @@
   "type": "module",
   "dependencies": {
     "bcryptjs": "^3.0.3",
+    "canvas-confetti": "^1.9.4",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
+    "lucide-react": "^1.47.0",
     "multer": "^2.4.0",
     "node-cron": "^4.6.0",
+    "qrcode.react": "^4.2.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
     "sqlite3": "5.1.7"
   },
   "devDependencies": {
-    "nodemon": "^3.1.14"
+    "@tailwindcss/vite": "^4.3.3",
+    "@vitejs/plugin-react": "^6.1.1",
+    "nodemon": "^3.1.14",
+    "tailwindcss": "^4.3.3",
+    "vite": "^8.3.0"
   }
 }

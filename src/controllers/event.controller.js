@@ -37,7 +37,13 @@ const createEventController = asyncHandler(async(req , res)=>
 const getEventsController = asyncHandler(async (req , res)=>
     {
         const events = await getAllEvents();
-        return res.status(200).json(new ApiResponse(200,  events, "Events fetched successfully"))
+        const eventsWithTiers = await Promise.all(
+            (events || []).map(async (ev) => {
+                const tiers = await getTiersByEventId(ev.id);
+                return { ...ev, tiers };
+            })
+        );
+        return res.status(200).json(new ApiResponse(200, eventsWithTiers, "Events fetched successfully"))
     })
 
 const getEventByIdController = asyncHandler(async(req , res)=>
@@ -50,8 +56,10 @@ const getEventByIdController = asyncHandler(async(req , res)=>
                 throw new ApiError(404, "Event not found")
             }
 
+        const tiers = await getTiersByEventId(Number(id));
+
         return res.status(200).json(
-            new ApiResponse(200 , event , "Event fetched successfully!")
+            new ApiResponse(200 , { ...event, tiers } , "Event fetched successfully!")
         )
     })
 
