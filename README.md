@@ -124,7 +124,8 @@ EventPulse is configured for 1-click deployment on **Vercel** with full-stack su
    - **Framework Preset**: Vite
    - **Build Command**: `vite build`
    - **Output Directory**: `dist`
-5. *(Optional)* Under **Environment Variables**, add:
+5. *(Optional)* Under **Environment Variables**, you can configure:
+   - `CORS_ORIGIN`: Your frontend domain (e.g. `https://your-eventpulse.vercel.app`), or leave empty for automatic origin reflection (works for all Vercel domains & preview deployments).
    - `ACCESS_TOKEN_SECRET`: (e.g. any random 32+ character string)
    - `REFRESH_TOKEN_SECRET`: (e.g. any random 32+ character string)
 6. Click **Deploy**. Both the React client and Express API endpoints will be live on your `.vercel.app` domain!

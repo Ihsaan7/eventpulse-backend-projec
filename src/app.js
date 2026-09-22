@@ -17,8 +17,20 @@ const distPath = path.resolve(__dirname, "../dist");
 
 const app = express();
 //========== MIDDLEWARES ==================
+const allowedCorsOrigin = process.env.CORS_ORIGIN;
 app.use(cors({
-    origin: (origin, callback) => callback(null, origin || true),
+    origin: (origin, callback) => {
+        // If specific CORS_ORIGIN is configured, support single origin or comma-separated list
+        if (allowedCorsOrigin && allowedCorsOrigin !== "*") {
+            const origins = allowedCorsOrigin.split(",").map(o => o.trim());
+            if (!origin || origins.includes(origin) || origin.endsWith(".vercel.app")) {
+                return callback(null, origin || true);
+            }
+            return callback(new Error("CORS blocked by origin configuration"));
+        }
+        // Default: reflect incoming request origin (supports same-domain Vercel frontend, previews, and localhost)
+        return callback(null, origin || true);
+    },
     credentials: true
 }))
 

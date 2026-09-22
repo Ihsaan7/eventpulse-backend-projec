@@ -121,7 +121,42 @@ export const connectDB = () => {
           return reject(execError);
         }
         console.log("Schema executed successfully!");
-        resolve(db);
+
+        // Auto-seed default sample events if table is empty (ensures Vercel serverless deployments always have events)
+        db.get("SELECT COUNT(*) as count FROM events", (countErr, row) => {
+          if (!countErr && (!row || row.count === 0)) {
+            console.log("🌱 Database is empty. Seeding initial conferences and ticket tiers...");
+            const seedQuery = `
+              INSERT OR IGNORE INTO users (id, name, email, password_hash, role)
+              VALUES (1, 'TechSummit Organizer', 'organizer@eventpulse.io', '$2b$10$wK1Rk3Z7x9xY.sampleHashForDemoOrganizer', 'ORGANIZER');
+
+              INSERT INTO events (id, organizer_id, title, description, venue, start_time, status)
+              VALUES 
+              (1, 1, 'React Global Summit 2026', 'The premier gathering for full-stack and frontend engineers exploring modern React, SSR, and edge architecture.', 'Metropolitan Pavilion, New York, NY', '2026-11-20 09:30:00', 'PUBLISHED'),
+              (2, 1, 'Node.js & Cloud Conference 2026', 'Deep dive into microservices, runtime performance, serverless scaling, and distributed architecture.', 'Convention Center Hall A, San Francisco, CA', '2026-10-15 09:00:00', 'PUBLISHED'),
+              (3, 1, 'DevOps & AI Systems World', 'Uniting infrastructure engineers, platform teams, and AI practitioners scaling production workloads.', 'Convention Center Hall B, Austin, TX', '2026-12-05 10:00:00', 'PUBLISHED');
+
+              INSERT INTO ticket_tiers (id, event_id, tier_name, price, available_seats)
+              VALUES
+              (1, 1, 'General Admission', 89, 150),
+              (2, 1, 'Executive VIP Pass', 249, 30),
+              (3, 2, 'Developer Pass', 50, 100),
+              (4, 2, 'VIP All-Access', 150, 25),
+              (5, 3, 'Standard Conference Pass', 75, 120),
+              (6, 3, 'VIP Workshop Pass', 199, 40);
+            `;
+            db.exec(seedQuery, (seedErr) => {
+              if (seedErr) {
+                console.warn("Auto-seed notice:", seedErr.message);
+              } else {
+                console.log("✅ Seed events and ticket tiers loaded successfully!");
+              }
+              resolve(db);
+            });
+          } else {
+            resolve(db);
+          }
+        });
       });
     });
   });
